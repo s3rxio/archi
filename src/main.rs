@@ -1,7 +1,7 @@
-mod partition;
+mod command;
 
-use clap::{Parser, Subcommand};
-use partition::PartitionCommand;
+use clap::Parser;
+use command::{Command, Commands};
 
 #[derive(Parser, Debug)]
 #[command(
@@ -12,22 +12,14 @@ use partition::PartitionCommand;
 )]
 struct Cli {
     #[command(subcommand)]
-    command: Command,
+    command: Commands,
 }
 
-#[derive(Subcommand, Debug)]
-enum Command {
-    #[command(subcommand)]
-    Partition(PartitionCommand),
-}
-
-fn main() {
+fn main() -> anyhow::Result<(), anyhow::Error> {
     let args = Cli::parse();
-
-    dbg!(&args);
 
     // FIXME: How to do that without match or without writing each command
     match args.command {
-        Command::Partition(command) => command.execute().unwrap(),
+        Commands::Partition(command) => command.execute(),
     }
 }
